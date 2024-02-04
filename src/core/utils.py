@@ -1,5 +1,7 @@
 from typing import Hashable
 
+from core.format_adapters.formats import TypeFormat
+
 
 def walk_dict(d, path=None):
     path = path or []
@@ -35,3 +37,18 @@ def insert_value_into_dict_with_path(d: dict, path: list[Hashable], value):
 
     current_dict[path[0]] = value
     return d
+
+
+def convert_content_type_to_internal_format(content_type: str) -> TypeFormat:
+    content_type = content_type.lower()
+
+    mapper_formats = {
+        'application/json': TypeFormat.JSON,
+        'application/xml': TypeFormat.XML,
+        'text/xml': TypeFormat.XML,
+    }
+
+    if content_type not in mapper_formats:
+        raise ValueError(f'Content type must be one of {", ".join(mapper_formats.keys())}')
+
+    return mapper_formats[content_type]
